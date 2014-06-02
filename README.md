@@ -159,7 +159,7 @@ also available in FASTA format at /data/gottcha/FASTA/:
   * GOTTCHA_VIRUSES_c3498_k85_u24_xHUMAN3x.species.tar.gz (68MB)
   * GOTTCHA_VIRUSES_c3498_k85_u24_xHUMAN3x.strain.tar.gz (68MB)
 
-Note: We have been reported that the our server doesn't work for some IPs.
+Note: We have noticed that our SFTP server doesn't work for some IPs.
 If you have any difficulty obtaining the databases, please contact Po-E Li <po-e@lanl.gov>.
 
 -------------------------------------------------------------------
