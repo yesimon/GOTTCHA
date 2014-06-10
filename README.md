@@ -172,7 +172,7 @@ as input and specify the location and name of the database.
 
 Here is the general usage to run GOTTCHA:
 
- > $ bin/gottcha.pl -i <FASTQ> -d <PATH/DATABASE_PREFIX>
+ > $ bin/gottcha.pl -i \<FASTQ\> -d \<PATH/DATABASE_PREFIX\>
 
 We provided a testing FASTQ file and example output in ./test. The following command
 is an example that runs "test.fastq" through GOTTCHA using a species-level database with
