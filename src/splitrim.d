@@ -788,7 +788,7 @@ void trimEntry(inputOptions inOpts,
                             // Append to FASTQ TRIM file
                             ////////////////////////////
 
-                            enum ctr = ctRegex!(`^(\S+)\s+(.+)`);        // generate native machine code for regex at compile time
+                            enum ctr = ctRegex!(`^(\S+)\s?(.*)`);        // generate native machine code for regex at compile time
                             auto m = match(h1, ctr);                    // match and store
                             string h1leader  = m.captures[1];           // extract match #1
                             string h1trailer = m.captures[2];           // extract match #2
