@@ -101,7 +101,7 @@ my $MODE       = defined $opt{mode}    ? $opt{mode} : "summary";
 my $BWAMETHOD  = "mem";
 my $BWA_OPT    = defined $opt{bwaOpt}  ? $opt{bwaOpt} : "-k 30 -T 0 -B 100 -O 100 -E 100";
 #-------SPLITRIM OPTIONS-------
-my $STDIR      = defined $opt{stDir}   ? $opt{stDir}   : "$TMPDIR/splitrim";
+my $STDIR      = defined $opt{stDir}   ? $opt{stDir}   : "$OUTDIR/$TMPDIR/splitrim";
 my $TRIM_FIXL  = defined $opt{fixL}    ? $opt{fixL}    : 30;
 my $TRIM_MINQ  = defined $opt{minQ}    ? $opt{minQ}    : 20;
 my $TRIM_ASCII = defined $opt{ascii}   ? $opt{ascii}   : 33;
@@ -114,7 +114,7 @@ my $FIL_MINL   = defined $opt{minLen}  ? $opt{minLen}  : 100;
 my $FIL_MINH   = defined $opt{minHits} ? $opt{minHits} : 10;
 #-------DEBUG---------
 my $DEBUG_MODE = $opt{debug};
-my $LOGFILE    = "$PREFIX.gottcha.log";
+my $LOGFILE    = "$OUTDIR/$PREFIX.gottcha.log";
 
 my ($DBPATH) = $opt{database} =~ /^(.*)\/[^\/]+$/;
 $DBPATH ||= ".";
@@ -144,7 +144,7 @@ unless ( defined $db_level{$DBLVL} ){
 }
 
 #open (STDOUT, "| tee -a $LOGFILE");
-
+`mkdir -p $OUTDIR/$TMPDIR`;
 $ct = &timeInterval($time);
 &executeCommand("rm $LOGFILE | touch $LOGFILE", "[$ct] ERROR: Failed to create logfile: $LOGFILE."); 
 
