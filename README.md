@@ -140,7 +140,7 @@ Then use 'tar' to unpack and decompress both archives:
 Files will be expanded to ./database directory by default.
 
 Here is a list of the available pre-computed databases. Note that these databases are
-also available in FASTA format at /data/gottcha/FASTA/:
+also available in FASTA format at gottcha/FASTA/:
 
   * GOTTCHA_BACTERIA_c3514_k24_u24.class.tar.gz (4.6GB)
   * GOTTCHA_BACTERIA_c3514_k24_u24.family.tar.gz (4.6GB)
