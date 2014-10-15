@@ -39,8 +39,8 @@ in the "test" directory. More details are stated in the INSTRUCTION section.
 3. Downloading lookup table and species-level database from our SFTP server.
    Use '9001gottcha' as the password when the request prompts:
  
-        $ sftp -o "Port 33001" gottcha@img-gp.lanl.gov:/data/gottcha/GOTTCHA_lookup.tar.gz ./
-        $ sftp -o "Port 33001" gottcha@img-gp.lanl.gov:/data/gottcha/GOTTCHA_BACTERIA_c3514_k24_u24.species.tar.gz ./
+        $ sftp -o "Port 33001" gottcha@img-gp.lanl.gov:gottcha/GOTTCHA_lookup.tar.gz ./
+        $ sftp -o "Port 33001" gottcha@img-gp.lanl.gov:gottcha/GOTTCHA_BACTERIA_c3514_k24_u24.species.tar.gz ./
    
    If you have any difficulty obtaining the databases, please contact Po-E Li <po-e@lanl.gov>.
 
@@ -129,8 +129,8 @@ corresponding *.md5 file for verification.
 
 You can use the 'sftp' command to download both archives, one at a time:
 
-        $ sftp -o "Port 33001" gottcha@img-gp.lanl.gov:/data/gottcha/GOTTCHA_lookup.tar.gz ./
-        $ sftp -o "Port 33001" gottcha@img-gp.lanl.gov:/data/gottcha/GOTTCHA_BACTERIA_c3514_k24_u24_xHUMAN3x.species.tar.gz ./
+        $ sftp -o "Port 33001" gottcha@img-gp.lanl.gov:gottcha/GOTTCHA_lookup.tar.gz ./
+        $ sftp -o "Port 33001" gottcha@img-gp.lanl.gov:gottcha/GOTTCHA_BACTERIA_c3514_k24_u24_xHUMAN3x.species.tar.gz ./
 
 Then use 'tar' to unpack and decompress both archives:
 
