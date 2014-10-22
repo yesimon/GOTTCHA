@@ -52,8 +52,7 @@ appropriate D compiler (see below).
 You will need local copies of NCBI's genome sequences and their associated GenBank
 files. Ideally, for bacteria, you would transfer the *.fna and *.gbk files of 
 (currently) ftp://ftp.ncbi.nih.gov/genbank/genomes/Bacteria to your local disk, 
-yielding, say, the destination directory of "/localdir/ftp.ncbi.nih.gov/genbank/
-genomes/Bacteria". Since different GI numbers exist for the same genome projects 
+yielding, say, the destination directory of "/localdir/ftp.ncbi.nih.gov/genbank/genomes/Bacteria". Since different GI numbers exist for the same genome projects 
 depending on whether you're in the "ftp.ncbi.nih.gov/genbank/genomes" directory 
 or the "ftp.ncbi.nih.gov/genomes" directory, you should also download the *.gbk
 files of ftp://ftp.ncbi.nih.gov/genomes/Bacteria to local disk. You should then
@@ -94,8 +93,7 @@ into the next step.
 
 The "mkGottchaTaxTree.pl" file will generate TWO required custom-formatted files
 for the "gottcha.pl" program: the "speciesTreeGI.dmp" and "genomeVitals.dmp" 
-files. Both are Perl Storable-formatted files (see http://search.cpan.org/~ams/
-Storable/Storable.pm). In order to run "mkGottchaTaxTree.pl", first you will need
+files. Both are Perl Storable-formatted files (see http://search.cpan.org/~ams/Storable/Storable.pm). In order to run "mkGottchaTaxTree.pl", first you will need
 to download three NCBI taxonomy dump files from ftp://ftp.ncbi.nih.gov/pub/taxonomy
 directory. The "taxdump.tar.gz" file will provide the "names.dmp" and "nodes.dmp"
 files, while the "gi_taxid_nucl.dmp.gz" will provide the "gi_taxid_nucl.dmp" file.
@@ -128,11 +126,9 @@ or [OTHERS]. Both the "draft.txt" and "completed.txt" files are of the same form
 If you have two genome project directories for the same organism, as is the case
 of the "genbank/genomes" and "genomes" issue described above, only specify the 
 directories of genome project that contains the (*.fna) sequence files, and NOT 
-both. So if the "genbank/genomes" directory /localdir/ftp.ncbi.nih.gov/genbank/
-genomes/Bacteria/Acinetobacter_baumannii_AYE_uid28921 has the relevant sequence 
-files, use this project directory rather than the "genomes" directory /localdir/
-ftp.ncbi.nih.gov/genomes/Bacteria/Acinetobacter_baumannii_AYE_uid61637. If both 
-have the sequence files, choose only one! 
+both. So if the "genbank/genomes" directory /localdir/ftp.ncbi.nih.gov/genbank/genomes/Bacteria/Acinetobacter_baumannii_AYE_uid28921 has the relevant sequence 
+files, use this project directory rather than the "genomes" directory /localdir/ftp.ncbi.nih.gov/genomes/Bacteria/Acinetobacter_baumannii_AYE_uid61637. If both 
+have the sequence files, choose only one!
 
  Note that if you include genome sequencing projects of the same strain -- even if
 from only the "genbank/genomes" directory -- it is highly likely that both genomes
@@ -148,7 +144,7 @@ two E. coli genome projects for example:
 The following in a generic example of the "completed.txt" file containing genomic 
 sequences from multiple sources.
  
- > [VIRUSES]   
+ > [VIRUSES]
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Thielaviopsis_basicola_mitovirus_uid37715   
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Thogoto_virus_uid15043   
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Thottapalayam_virus_uid29841   
@@ -158,7 +154,7 @@ sequences from multiple sources.
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Tiger_puffer_nervous_necrosis_virus_uid41607   
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Venezuelan_equine_encephalitis_virus_uid15302   
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Yersinia_pestis_phage_phiA1122_uid14332   
- > [PROKARYOTES]   
+ > [PROKARYOTES]
  > /localdir/ftp.ncbi.nih.gov/genbank/genomes/Bacteria/Bacillus_anthracis_Ames_uid309   
  > /localdir/ftp.ncbi.nih.gov/genbank/genomes/Bacteria/Bacillus_anthracis_CDC_684_uid31329   
  > /localdir/ftp.ncbi.nih.gov/genbank/genomes/Bacteria/Bacillus_anthracis_CI_uid36309   
