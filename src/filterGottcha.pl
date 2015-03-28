@@ -193,7 +193,7 @@ sub exportAbundances {
 
     my $wantedRank = $taxAbbrRevLookup{ $_[0]->{TAXLEVEL} };
     #my @headers = @{ $_[0]->{HEADERS} };
-    my @headers = ("LINEAR_LENGTH", "TOTAL_BP_MAPPED", "HIT_COUNT", "LINEAR_DOC", "NORM_COV", "NORM_COV_SCALED");
+    my @headers = ("LINEAR_LENGTH", "TOTAL_BP_MAPPED", "HIT_COUNT", "HIT_COUNT_PLASMID", "READ_COUNT", "LINEAR_DOC", "NORM_COV" );
     
     # Headers
     print $OUTFILE $_[0]->{TAXLEVEL}."\t".join("\t", @headers)."\n";
@@ -204,7 +204,6 @@ sub exportAbundances {
         my @headerValues = @{ $_[1]->{$wantedRank}->{$org} }{@headers};
 
         $results{$org}->{NORM_COV}        = $_[1]->{$wantedRank}->{$org}->{NORM_COV};
-        $results{$org}->{NORM_COV_SCALED} = $_[1]->{$wantedRank}->{$org}->{NORM_COV_SCALED};
         
         print $OUTFILE $org."\t".join("\t", @headerValues)."\n";
     }
@@ -236,7 +235,7 @@ sub displayRollups {
 #                         "P"  => "PHYLUM",
 #                        );
 
-    my @headers = ("LINEAR_LENGTH", "TOTAL_BP_MAPPED", "HIT_COUNT", "LINEAR_DOC", "NORM_COV", "NORM_COV_SCALED");
+    my @headers = ("LINEAR_LENGTH", "TOTAL_BP_MAPPED", "HIT_COUNT", "HIT_COUNT_PLASMID", "READ_COUNT", "LINEAR_DOC", "NORM_COV");
 
     foreach my $taxAbbr (@taxAbbrs) {
         print "\n\n".$taxAbbrLookup{$taxAbbr}."\t".join("\t", @headers)."\n";
@@ -251,7 +250,7 @@ sub displayRollups {
 # ARGS: \%inputOptions, \%ancestry
 sub outputLineage {
 
-    my @headers = ("LINEAR_LENGTH", "TOTAL_BP_MAPPED", "HIT_COUNT", "LINEAR_DOC", "NORM_COV", "NORM_COV_SCALED");
+    my @headers = ("LINEAR_LENGTH", "TOTAL_BP_MAPPED", "HIT_COUNT", "HIT_COUNT_PLASMID", "READ_COUNT", "LINEAR_DOC", "NORM_COV");
 
     #my %taxLevel = ( "STRAIN"  => "90",
     #                 "SPECIES" => "80",
@@ -372,9 +371,11 @@ sub filterTable {
     {
         my @strains = keys %{ $_[1] };
         foreach my $strain (@strains) {
-            $ancestry{SS}->{$strain}->{TOTAL_BP_MAPPED} += $_[1]->{$strain}->{TOTAL_BP_MAPPED};
-            $ancestry{SS}->{$strain}->{LINEAR_LENGTH}   += $_[1]->{$strain}->{LINEAR_LENGTH};
-            $ancestry{SS}->{$strain}->{HIT_COUNT}       += $_[1]->{$strain}->{HIT_COUNT};
+            $ancestry{SS}->{$strain}->{TOTAL_BP_MAPPED}   += $_[1]->{$strain}->{TOTAL_BP_MAPPED};
+            $ancestry{SS}->{$strain}->{LINEAR_LENGTH}     += $_[1]->{$strain}->{LINEAR_LENGTH};
+            $ancestry{SS}->{$strain}->{HIT_COUNT}         += $_[1]->{$strain}->{HIT_COUNT};
+            $ancestry{SS}->{$strain}->{HIT_COUNT_PLASMID} += $_[1]->{$strain}->{HIT_COUNT_PLASMID};
+            $ancestry{SS}->{$strain}->{READ_COUNT}        += $_[1]->{$strain}->{READ_COUNT};
         }
         my $sum = 0;
         foreach my $strain (@strains) {
@@ -390,7 +391,6 @@ sub filterTable {
             $max = $norm_cov unless ($max > $norm_cov);
         }
         
-        $ancestry{SS}->{$_}->{NORM_COV_SCALED} = $ancestry{SS}->{$_}->{NORM_COV} / $max foreach (@strains);
     }
 
     ############################################################################
@@ -417,9 +417,11 @@ sub filterTable {
         }
         die "*FATAL*: Could not place STRAIN \"".$org."\" into parent SPECIES.\n" if(!$species);
 
-        $ancestry{S}->{$species}->{TOTAL_BP_MAPPED} += $_[1]->{$org}->{TOTAL_BP_MAPPED};
-        $ancestry{S}->{$species}->{LINEAR_LENGTH}   += $_[1]->{$org}->{LINEAR_LENGTH};
-        $ancestry{S}->{$species}->{HIT_COUNT}       += $_[1]->{$org}->{HIT_COUNT};
+        $ancestry{S}->{$species}->{TOTAL_BP_MAPPED}   += $_[1]->{$org}->{TOTAL_BP_MAPPED};
+        $ancestry{S}->{$species}->{LINEAR_LENGTH}     += $_[1]->{$org}->{LINEAR_LENGTH};
+        $ancestry{S}->{$species}->{HIT_COUNT}         += $_[1]->{$org}->{HIT_COUNT};
+        $ancestry{S}->{$species}->{HIT_COUNT_PLASMID} += $_[1]->{$org}->{HIT_COUNT_PLASMID};
+        $ancestry{S}->{$species}->{READ_COUNT}        += $_[1]->{$org}->{READ_COUNT};
         
         
     } #ORG
@@ -446,8 +448,6 @@ sub filterTable {
             $max_linear_doc_sum = $norm_cov unless ($max_linear_doc_sum > $norm_cov);
         }
 
-        # Scale to largest {NORM_COV}
-        $ancestry{S}->{$_}->{NORM_COV_SCALED} = $ancestry{S}->{$_}->{NORM_COV} / $max_linear_doc_sum foreach (@species);
     }
 
     #print Dump(\%ancestry)."\n"; <STDIN>;
@@ -480,10 +480,12 @@ sub filterTable {
                 if(exists $lookup->{$prevRankName}) {
                     my $currRankName = $lookup->{$prevRankName};
                     # E.g. $ancestry{G}->{ $_[0]->{TAXLOOKUP}->{$species}->{G} }->{TOTAL_BP_MAPPED} += $ancestry{S}->{$species}->{TOTAL_BP_MAPPED};
-                    $ancestry{$currTaxAbbr}->{$currRankName}->{TOTAL_BP_MAPPED} += $ancestry{$prevTaxAbbr}->{$prevRankName}->{TOTAL_BP_MAPPED};
+                    $ancestry{$currTaxAbbr}->{$currRankName}->{TOTAL_BP_MAPPED}   += $ancestry{$prevTaxAbbr}->{$prevRankName}->{TOTAL_BP_MAPPED};
                     # E.g. $ancestry{G}->{ $_[0]->{TAXLOOKUP}->{$species}->{G} }->{LINEAR_LENGTH}   += $ancestry{S}->{$species}->{LINEAR_LENGTH};
-                    $ancestry{$currTaxAbbr}->{$currRankName}->{LINEAR_LENGTH}   += $ancestry{$prevTaxAbbr}->{$prevRankName}->{LINEAR_LENGTH};
-                    $ancestry{$currTaxAbbr}->{$currRankName}->{HIT_COUNT}   += $ancestry{$prevTaxAbbr}->{$prevRankName}->{HIT_COUNT};
+                    $ancestry{$currTaxAbbr}->{$currRankName}->{LINEAR_LENGTH}     += $ancestry{$prevTaxAbbr}->{$prevRankName}->{LINEAR_LENGTH};
+                    $ancestry{$currTaxAbbr}->{$currRankName}->{HIT_COUNT}         += $ancestry{$prevTaxAbbr}->{$prevRankName}->{HIT_COUNT};
+                    $ancestry{$currTaxAbbr}->{$currRankName}->{HIT_COUNT_PLASMID} += $ancestry{$prevTaxAbbr}->{$prevRankName}->{HIT_COUNT_PLASMID};
+                    $ancestry{$currTaxAbbr}->{$currRankName}->{READ_COUNT}        += $ancestry{$prevTaxAbbr}->{$prevRankName}->{READ_COUNT};
                 }
                 else {
                     die "*FATAL*: Could not place $prevRankName [$prevTaxAbbr] into parent [$currTaxAbbr]\n";
@@ -515,8 +517,6 @@ sub filterTable {
                 $max_sum = $norm_cov unless ($max_sum > $norm_cov);
             }
                 
-            # Scale to largest {NORM_COV}
-            $ancestry{$currTaxAbbr}->{$_}->{NORM_COV_SCALED} = $ancestry{$currTaxAbbr}->{$_}->{NORM_COV} / $max_sum foreach (@names);
 
         } #taxAbbrIdx
     }
