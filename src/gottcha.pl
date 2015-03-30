@@ -194,7 +194,6 @@ else{
                     , "Failed running splitrim. Please check $LOGFILE for detail.");
 	$ct = &timeInterval($time);
     print "[$ct] Done splitrim.\n";
-    
 }
 
 #print splitrim summary
@@ -460,7 +459,9 @@ mapping reads to a GOTTCHA database using BWA, profiling/filtering the result.
 
 USAGE: $0 [OPTIONS] --input <FASTQ> --database <DATABASE_PATH>
 
-    --input|i    <STRING>  Input a single-ended FASTQ file.
+    --input|i    <STRING>  Input a FASTQ file. Currently only ONE file is 
+                           allowed. Please concatenate multiple files before you 
+						   run GOTTCHA.
     --database|d <STRING>  The path of signature database. The database can be
                            in FASTA format or BWA index (5 files).
 
@@ -468,7 +469,7 @@ USAGE: $0 [OPTIONS] --input <FASTQ> --database <DATABASE_PATH>
 
   *** GENERAL OPTIONS ***
 
-    --threads|t  <INT>     Number of threads [default: 2]
+    --threads|t  <INT>     Number of threads [default: auto-detect]
     --dbLevel|l  <STRING>  Specify the taxonomic level of the input database 
                            (e.g. family, species, genus, strain, etc.). The
                            value will be auto-detected if the input database
