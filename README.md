@@ -139,6 +139,18 @@ Then use 'tar' to unpack and decompress both archives:
 
 Files will be expanded to ./database directory by default.
 
+ > Note: The plasmid related results and the option need the new parsed database to work properly.
+ > For users who downloaded the databases before 30th March 2015, we encourage you to download the corresponding
+ > new parsed database (*.parsedGOTTCHA.dmp) to have a taste of new plasmid related feature. GOTTCHA v1.0 still supports old 
+ > databases but plasmid relative results will always be shown as zero due to absence of plasmid information.
+ > The new .dmp files are about 130MB size in gzipped format. Please unzipped the file and use it to
+ > replace the old one. The general location of file is "gottcha/parsed_database_only/<DATABASE_NAME>.parsedGOTTCHA.dmp.gz". For
+ > example, to download the new dmp file for species level database:
+ >
+ >      $ sftp -o "Port 33001" gottcha@gottcha/parsed_database_only/GOTTCHA_BACTERIA_c3514_k24_u24_xHUMAN3x.species.parsedGOTTCHA.dmp.gz ./
+ > 
+
+
 Here is a list of the available pre-computed databases. Note that these databases are
 also available in FASTA format at gottcha/FASTA/:
 
