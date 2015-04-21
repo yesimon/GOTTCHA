@@ -265,6 +265,11 @@ This project is funded by U.S. Defense Threat Reduction Agency [R-00059-12-0 and
 
 -------------------------------------------------------------------
 ## CHANGE LOG
+Version 1.0a:
+> 1. Support multiple input files.
+> 2. Add "--dumpSam" option to dump the mapping result.
+> 3. Fix minor bugs.
+
 Version 1.0:
 > 1. Report the number of reads that hit to plasmids and provide an option to ignore them.
 > 2. Report the number of READ_COUNT.

@@ -36,15 +36,15 @@ use FindBin qw($RealBin);
 use strict;
 
 # environment setup
-my $ver = "1.0";
-$ENV{PATH} = "$RealBin:$RealBin/../ext/bin:$ENV{PATH}";
+my $ver        = "1.0a";
+$ENV{PATH}     = "$RealBin:$RealBin/../ext/bin:$ENV{PATH}";
 $ENV{PERL5LIB} = "$RealBin/../ext/lib/perl5:$ENV{PERL5LIB}";
 
 $|=1;
 my %opt;
 my $res=GetOptions(\%opt,
     'input|i=s',
-    'database|d=s',
+    'database|db|d=s',
     'dbLevel|l=s',
     'mode|m=s',
     'noPlasmidHit|n',
@@ -63,14 +63,15 @@ my $res=GetOptions(\%opt,
     'taxLvl=s',
     'minLen=i',
     'minHits=i',
+    'dumpSam',
     'debug',
     'help|h|?') || &usage();
 
 if ( $opt{help} ) { &usage(); }
-if ( !-e $opt{input} && !-e $opt{stDir} ) { &usage("ERROR: No reads found."); }
-if ( ! defined $opt{database} ) { &usage("ERROR: Please specify a gottcha database."); }
+if ( !defined $opt{input} && !-e $opt{stDir} ) { &usage("ERROR: No reads found."); }
+if ( !defined $opt{database} ) { &usage("ERROR: Please specify a gottcha database."); }
 
-my ($fn) = $opt{input} =~ /([^\/]+)\.[^\.]+$/;
+my ($fn) = $opt{input} =~ /([^\/.]+)\.[^\/]+$/;
 $fn ||= "gottcha_output";
 
 my $time = time;
@@ -171,34 +172,92 @@ $ct = &timeInterval($time);
 print "[$ct] Done. All required scripts and tools found.\n";
 
 # run splitrim
-$ct = &timeInterval($time);
+my @fastqs = split /,/, $INPUT;
+my @st_fastq_files;
+my @st_stats_files;
 
 # check if pre-splitrimmed FASTQ provided
 if( defined $opt{stDir} ){
     print "[$ct] Pre-splitrimmed directory is specified to $STDIR. Skip split-trimming step.\n";
-    my $file = &checkFileAbsence("$STDIR/${PREFIX}_splitrim.fastq", "$STDIR/${PREFIX}_splitrim.stats.txt");
-    if( $file ){
-        die "[$ct] ERROR: Can't find $file in $STDIR directory.\n";
-    }
+	foreach my $fastq ( @fastqs ){
+		my ($p) = $fastq =~ /^([^\/]+)\.\w+$/;
+    	my $file = &checkFileAbsence("$STDIR/${p}_splitrim.fastq", "$STDIR/${p}_splitrim.stats.txt");
+    	if( $file ){
+        	die "[$ct] ERROR: Can't find $file in $STDIR directory.\n";
+    	}
+		else{
+			push @st_fastq_files, "$STDIR/${p}_splitrim.fastq";
+			push @st_stats_files, "$STDIR/${p}_splitrim.stats.txt";
+		}
+	}
 }
 else{
-    print "[$ct] Split-trimming input reads (fixL=$TRIM_FIXL, minQ=$TRIM_MINQ, ascii=$TRIM_ASCII)\n";
-    &executeCommand("splitrim              \\
-                       --inFile=$INPUT     \\
-                       --fixL=$TRIM_FIXL   \\
-                       --recycle           \\
-                       --ascii=$TRIM_ASCII \\
-                       --minQ=$TRIM_MINQ   \\
-                       --prefix=${PREFIX}  \\
-                       --outPath=$STDIR"
-                    , "Failed running splitrim. Please check $LOGFILE for detail.");
-	$ct = &timeInterval($time);
-    print "[$ct] Done splitrim.\n";
+	print "[$ct] Split-trimming with parameters fixL=$TRIM_FIXL, minQ=$TRIM_MINQ, ascii=$TRIM_ASCII.\n";
+	foreach my $fastq ( @fastqs )
+	{
+		my ($p) = $fastq =~ /^([^\/]+)\.\w+$/;
+		print "[$ct] Split-trimming: $fastq...\n";
+		&executeCommand("splitrim                \\
+		                   --inFile=$fastq       \\
+		                   --fixL=$TRIM_FIXL     \\
+		                   --recycle             \\
+		                   --ascii=$TRIM_ASCII   \\
+		                   --minQ=$TRIM_MINQ     \\
+		                   --prefix=$p           \\
+		                   --outPath=$STDIR"
+		                , "Failed running splitrim. Please check $LOGFILE for detail.");
+		push @st_fastq_files, "$STDIR/${p}_splitrim.fastq";
+		push @st_stats_files, "$STDIR/${p}_splitrim.stats.txt";
+		$ct = &timeInterval($time);
+    	print "[$ct] Done splitrimming $fastq.\n";
+	}
 }
 
+# merging
+my $merged_stats;
+foreach my $stats ( @st_stats_files ){
+	open STATS, $stats or die "Can't open splitrim stats: $!\n";
+	my @lines = <STATS>;
+	my $tempidx=0;
+	foreach my $line ( @lines[3..7] ){
+		my @tmp = split(/\t/, $line);
+		$merged_stats->{$tempidx}->{"$tmp[0]"}->{LINE} = $line;
+		$merged_stats->{$tempidx}->{"$tmp[0]"}->{1} += $tmp[1];
+		$merged_stats->{$tempidx}->{"$tmp[0]"}->{2} += $tmp[2];
+		$tempidx++;
+	}
+	close STATS;
+}
+
+open STATS, ">$OUTDIR/$TMPDIR/${PREFIX}_splitrim.stats.txt" or die "Can't open splitrim stats: $!\n";
+print STATS "\n\n\n\n";
+foreach my $idx ( sort {$a<=>$b} keys %$merged_stats ){
+	foreach my $header ( keys %{$merged_stats->{$idx}} ){
+		if( $merged_stats->{$idx}->{$header}->{1} ){
+			if( $header =~ /^Mean/ ){
+				$merged_stats->{$idx}->{$header}->{1} /= scalar @fastqs;
+				$merged_stats->{$idx}->{$header}->{2} /= scalar @fastqs;
+			}
+
+			printf STATS "%s\t%d\t%d\t(%.2f %%)\n",
+				$header,
+				$merged_stats->{$idx}->{$header}->{1},
+				$merged_stats->{$idx}->{$header}->{2},
+				$merged_stats->{$idx}->{$header}->{2}/$merged_stats->{$idx}->{$header}->{1}*100
+			;
+		}
+		else{
+			print STATS $merged_stats->{$idx}->{$header}->{LINE};
+		}
+	}
+}
+close STATS;
+
+$ct = &timeInterval($time);
+print "[$ct] Done merging splitrim stats.\n";
+
 #print splitrim summary
-open STATS, "$STDIR/${PREFIX}_splitrim.stats.txt" or die "Can't open splitrim stats: $!\n";
-print "\n";
+open STATS, "$OUTDIR/$TMPDIR/${PREFIX}_splitrim.stats.txt" or die "Can't open splitrim stats: $!\n";
 my @lines = <STATS>;
 $lines[4] =~ s/=+/=============/;
 foreach my $line ( @lines[3..8], ){
@@ -212,17 +271,20 @@ print "\n";
 # run bwa and profiling results
 $ct = &timeInterval($time);
 print "[$ct] Mapping split-trimmed reads to GOTTCHA database and profiling...\n";
-my $BWA_DEBUG = "| tee $OUTDIR/$TMPDIR/$PREFIX.sam" if $DEBUG_MODE;
+my $sam_output = "$OUTDIR/$TMPDIR/$PREFIX.sam";
+$sam_output = "$OUTDIR/$PREFIX.gottcha.sam" if $opt{dumpSam}; 
+my $BWA_DEBUG = "| tee $sam_output" if $DEBUG_MODE || $opt{dumpSam};
 my $extra_opts = "-noPlasmidHit" if $noPHit;
 my $realTHREADS = $THREADS-1 < 1 ? 1 : $THREADS-2;
+my $st_filelist = join " ", @st_fastq_files;
 
-&executeCommand("bwa $BWAMETHOD $BWA_OPT -t $realTHREADS $DB $STDIR/${PREFIX}_splitrim.fastq $BWA_DEBUG \\
+&executeCommand("cat $st_filelist | bwa $BWAMETHOD $BWA_OPT -t $realTHREADS $DB - $BWA_DEBUG \\
                  | profileGottcha.pl $extra_opts                              \\
                      --parsedDB=$DB.parsedGOTTCHA.dmp                         \\
                      --sam                                                    \\
                      --outdir=$OUTDIR/$TMPDIR                                 \\
                      --prefix=$PREFIX                                         \\
-                     --trimStats=$STDIR/${PREFIX}_splitrim.stats.txt          \\
+                     --trimStats=$OUTDIR/$TMPDIR/${PREFIX}_splitrim.stats.txt \\
                      --treeFile=$DBPATH/speciesTreeGI.dmp                     \\
                      --genomeVitals=$DBPATH/genomeVitals.dmp                  \\
 					 --noFastqOut --method=1 > $OUTDIR/$TMPDIR/profileGottcha.log 2>&1"
@@ -254,7 +316,7 @@ $ct = &timeInterval($time);
 print  "\n";
 print  "                                       RAW         SPLIT-TRIMMED\n";
 print  "                             =============         =============\n";
-printf "# of Processed Reads: %20s  %20s\n",                &thousandsSep($bwa_read_raw), &thousandsSep($bwa_processed);
+printf "# of Processed Reads: %20s  %20s\n",                &thousandsSep($bwa_read_raw), &thousandsSep($bwa_read);
 printf "   # of Mapped Reads: %20s  %20s (genome)\n",       &thousandsSep($bwa_mapped_raw), &thousandsSep($bwa_mapped);
 printf "   # of Mapped Reads: %20s  %20s (plasmid only)\n", &thousandsSep($bwa_mapped_raw_plasmid),  &thousandsSep($bwa_mapped_plasmid);
 printf " # of Unmapped Reads: %20s  %20s\n",                &thousandsSep($bwa_read_raw-$bwa_mapped_raw), &thousandsSep($bwa_unmapped);
@@ -459,9 +521,9 @@ mapping reads to a GOTTCHA database using BWA, profiling/filtering the result.
 
 USAGE: $0 [OPTIONS] --input <FASTQ> --database <DATABASE_PATH>
 
-    --input|i    <STRING>  Input a FASTQ file. Currently only ONE file is 
-                           allowed. Please concatenate multiple files before you 
-						   run GOTTCHA.
+    --input|i    <STRING>  Input one or multiple FASTQ file(s). Use comma (,)
+                           to separate multiple input files.
+	                       
     --database|d <STRING>  The path of signature database. The database can be
                            in FASTA format or BWA index (5 files).
 
@@ -503,6 +565,7 @@ USAGE: $0 [OPTIONS] --input <FASTQ> --database <DATABASE_PATH>
                            files. E.g. input file is "test.fastq", the script
                            will looking for "test_splitrim.fastq" and
                            "test_splitrim.stats.txt" in the specified directory.
+    --dumpSam              Dump the mapping result in SAM format.
 
   *** OPTIONS FOR SPLIT-TRIMMING READS ***
 
