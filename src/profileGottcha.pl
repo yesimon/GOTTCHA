@@ -2530,7 +2530,7 @@ sub parseSAM {
                 $MAPPED_TRIMMEDREADS_CNT++;
 
 				# Mapping entry conforms
-                if($fields[2] =~ m/^(gi\|(\d+)\|\S+\|(\w+(?:\.\d+))\|(\d+)\|(\d+)\|)/) {
+                if($fields[2] =~ m/^(gi\|(\d+)\|\S+\|(\w+(?:\.\d+))\|(\d+)\|(\d+)\|\d+\|)/) {
                 #if($fields[2] =~ m/^(gi\|(\d+)\|\S+\|\S+\|(\d+)\|(\d+)\|(\d+)\|)/) {         # <------ Req's all parsedDTAR.dmp files to be re-parsed & stored using --make_dmp and --db=<DBFILE>*
                     my $giFrag = $1;            # get GI fragment (subset of GI entries)
                     my $gi     = $2;            # get GI
