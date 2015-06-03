@@ -62,7 +62,7 @@ in the "test" directory. More details are stated in the INSTRUCTION section.
 ## DETAIL INSTRUCTIONS
 
 The detail of steps in the above section will be descrbed in this section. Note that all 
-instructions in this document use pre-computed databases downloaded from our SFTP site.
+instructions in this document use pre-computed databases downloaded from our web site.
 
 If you are looking for instructions to build a CUSTOM database and/or running GOTTCHA
 step-by-step, please read README_FULL.md.
@@ -71,7 +71,7 @@ step-by-step, please read README_FULL.md.
 ### Obtaining GOTTCHA
 
 The source codes can be downloading from [here](https://bitbucket.org/poeli/gottcha).
-The pre-computed databases need to be downloaded separately from our SFTP server.
+The pre-computed databases need to be downloaded separately from our web server.
 Please see below in the [Obtaining Pre-computed Databases] section.
        
 You can use "git" to obtain the package:
@@ -165,8 +165,7 @@ also available in FASTA format at gottcha/FASTA/:
   * GOTTCHA_VIRUSES_c3498_k85_u24_xHUMAN3x.species.tar.gz (68MB)
   * GOTTCHA_VIRUSES_c3498_k85_u24_xHUMAN3x.strain.tar.gz (68MB)
 
-Note: We have noticed that our SFTP server doesn't work for some IPs.
-If you have any difficulty obtaining the databases, please contact Po-E Li <po-e@lanl.gov>.
+Note: If you have any difficulty obtaining the databases, please contact Po-E Li <po-e@lanl.gov>.
 
 -------------------------------------------------------------------
 ### Running GOTTCHA
