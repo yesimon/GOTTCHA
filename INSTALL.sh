@@ -148,14 +148,9 @@ echo "
                  GOTTCHA installed successfully.
 ================================================================================
 
-The pre-computed bacterial and viral GOTTCHA databases are available at our SFTP
-server. If you want to create your own GOTTCHA signatue database, the detail
-instruction can be found in README_FULL.txt file.
-
-    SFTP server: img-gp.lanl.gov 
-    Port: 33001 
-    username: gottcha 
-    password: 9001gottcha
+The pre-computed bacterial and viral GOTTCHA databases are available at our web
+server:
+    https://greenhouse.lanl.gov/greenhouse/gottcha/
 
 Quick start:
     bin/gottcha.pl -i <FASTQ> -d <DATABASE>
