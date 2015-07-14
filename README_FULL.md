@@ -144,7 +144,7 @@ two E. coli genome projects for example:
 The following in a generic example of the "completed.txt" file containing genomic 
 sequences from multiple sources.
  
- > [VIRUSES]
+ > [VIRUSES]   
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Thielaviopsis_basicola_mitovirus_uid37715   
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Thogoto_virus_uid15043   
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Thottapalayam_virus_uid29841   
@@ -154,7 +154,7 @@ sequences from multiple sources.
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Tiger_puffer_nervous_necrosis_virus_uid41607   
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Venezuelan_equine_encephalitis_virus_uid15302   
  > /localdir/ftp.ncbi.nih.gov/genomes/Viruses/Yersinia_pestis_phage_phiA1122_uid14332   
- > [PROKARYOTES]
+ > [PROKARYOTES]   
  > /localdir/ftp.ncbi.nih.gov/genbank/genomes/Bacteria/Bacillus_anthracis_Ames_uid309   
  > /localdir/ftp.ncbi.nih.gov/genbank/genomes/Bacteria/Bacillus_anthracis_CDC_684_uid31329   
  > /localdir/ftp.ncbi.nih.gov/genbank/genomes/Bacteria/Bacillus_anthracis_CI_uid36309   
