@@ -148,9 +148,9 @@ echo "
                  GOTTCHA installed successfully.
 ================================================================================
 
-The pre-computed bacterial and viral GOTTCHA databases are available at our web
+The pre-computed bacterial and viral GOTTCHA databases are available at our ftp
 server:
-    https://greenhouse.lanl.gov/greenhouse/gottcha/
+    ftp://ftp.lanl.gov/public/genome/gottcha/
 
 Quick start:
     bin/gottcha.pl -i <FASTQ> -d <DATABASE>
