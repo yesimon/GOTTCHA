@@ -180,7 +180,7 @@ my @st_stats_files;
 if( defined $opt{stDir} ){
     print "[$ct] Pre-splitrimmed directory is specified to $STDIR. Skip split-trimming step.\n";
 	foreach my $fastq ( @fastqs ){
-		my ($p) = $fastq =~ /([^\/]+)\.\w+$/;
+		my ($p) = $fastq =~ /^([^\/]+)\.\w+$/;
     	my $file = &checkFileAbsence("$STDIR/${p}_splitrim.fastq", "$STDIR/${p}_splitrim.stats.txt");
     	if( $file ){
         	die "[$ct] ERROR: Can't find $file in $STDIR directory.\n";
@@ -195,7 +195,7 @@ else{
 	print "[$ct] Split-trimming with parameters fixL=$TRIM_FIXL, minQ=$TRIM_MINQ, ascii=$TRIM_ASCII.\n";
 	foreach my $fastq ( @fastqs )
 	{
-		my ($p) = $fastq =~ /([^\/]+)\.\w+$/;
+		my ($p) = $fastq =~ /^([^\/]+)\.\w+$/;
 		print "[$ct] Split-trimming: $fastq...\n";
 		&executeCommand("splitrim                \\
 		                   --inFile=$fastq       \\
